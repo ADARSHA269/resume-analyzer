@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Book appointment | CarePoint{% endblock %}
+{% block content %}
+<section class="page-heading"><div class="container"><span class="eyebrow">PATIENT APPOINTMENTS</span><h1 class="display-6 fw-bold mt-2">Book an appointment</h1><p class="text-secondary mb-0">Choose a specialist and an available date and time.</p></div></section>
+<section class="container section-space pt-4">
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="panel-card">
+        <h2 class="h5 fw-bold">1. Choose a specialty</h2>
+        <form method="get" id="doctorForm">
+          <label class="form-label mt-3" for="specialization">Specialization</label>
+          <select class="form-select" id="specialization" name="specialization" onchange="this.form.submit()">
+            <option value="">All specialties</option>{% for item in specializations %}<option value="{{ item }}" {% if selected_specialization == item %}selected{% endif %}>{{ item }}</option>{% endfor %}
+          </select>
+          <label class="form-label mt-3" for="doctor_id">Doctor</label>
+          <select class="form-select" id="doctor_id" name="doctor_id" onchange="this.form.submit()" required>
+            {% for doctor in doctors %}<option value="{{ doctor.id }}" {% if selected_doctor == doctor.id %}selected{% endif %}>{{ doctor.name }} · {{ doctor.specialization }}</option>{% endfor %}
+          </select>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="panel-card">
+        <h2 class="h5 fw-bold">2. Select an available slot</h2>
+        {% if slots %}
+        <form id="bookingForm" method="post">
+          <div class="row g-3 mt-1">
+            {% for slot in slots %}
+            <div class="col-sm-6 col-md-4">
+              <label class="slot-option">
+                <input type="radio" name="availability_id" value="{{ slot.id }}" required>
+                <span><strong>{{ slot.appointment_date|pretty_date }}</strong><small>{{ slot.time_slot|time_label }}</small></span>
+              </label>
+            </div>
+            {% endfor %}
+          </div>
+          <input type="hidden" name="doctor_id" value="{{ selected_doctor }}">
+          <button class="btn btn-primary btn-lg mt-4">Confirm booking</button>
+        </form>
+        {% else %}
+        <div class="empty-state mt-3">No available slots for this doctor right now. Please try another doctor.</div>
+        {% endif %}
+      </div>
+      <p class="small text-secondary mt-3">Bookings are pending until confirmed by the care team. Your appointment reference will appear in My appointments.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

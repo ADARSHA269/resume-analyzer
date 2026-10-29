@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | CarePoint{% endblock %}
+{% block content %}
+<section class="page-heading"><div class="container"><span class="eyebrow">{{ g.user.role|upper }} PORTAL</span><h1 class="display-6 fw-bold mt-2">Hello, {{ g.user.name.split(' ')[0] }}</h1><p class="text-secondary mb-0">{% if g.user.role == 'admin' %}Your hospital overview for today.{% else %}Your appointments and availability.{% endif %}</p></div></section>
+<section class="container section-space pt-4">
+{% if g.user.role == 'admin' %}
+  <div class="row g-3 mb-5">
+    {% for key, label in [('doctors', 'Doctors'), ('patients', 'Patients'), ('appointments', 'Appointments')] %}
+    <div class="col-md-4"><div class="metric-card"><span>{{ label }}</span><strong>{{ counts[key] }}</strong><small>Total registered {{ label|lower }}</small></div></div>
+    {% endfor %}
+  </div>
+  <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h4 fw-bold mb-0">Today's appointments</h2><div class="d-flex gap-2"><a href="{{ url_for('manage_appointments') }}" class="btn btn-outline-primary btn-sm">All appointments</a><a href="{{ url_for('manage_doctors') }}" class="btn btn-outline-primary btn-sm">Manage doctors</a></div></div>
+  {% if appointments %}
+  <div class="table-responsive panel-card p-0"><table class="table align-middle mb-0"><thead><tr><th>Time</th><th>Patient</th><th>Doctor</th><th>Specialty</th><th>Status</th><th>Action</th></tr></thead><tbody>
+  {% for appointment in appointments %}<tr><td>{{ appointment.time_slot|time_label }}</td><td>{{ appointment.patient_name }}</td><td>{{ appointment.doctor_name }}</td><td>{{ appointment.specialization }}</td><td><span class="status status-{{ appointment.status|lower }}">{{ appointment.status }}</span></td>
+    <td>{% if appointment.status in ['Pending', 'Confirmed'] %}<div class="d-flex gap-2">
+      {% if appointment.status == 'Pending' %}<form method="post" action="{{ url_for('update_appointment_status', appointment_id=appointment.id) }}"><input type="hidden" name="status" value="Confirmed"><button class="btn btn-sm btn-outline-primary">Confirm</button></form>{% endif %}
+      <form method="post" action="{{ url_for('cancel_appointment', appointment_id=appointment.id) }}" data-confirm="Cancel this appointment?"><button class="btn btn-sm btn-outline-danger">Cancel</button></form>
+    </div>{% endif %}</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<div class="empty-state">There are no appointments scheduled for today.</div>{% endif %}
+{% elif g.user.role == 'doctor' %}
+  <div class="row g-4">
+    <div class="col-lg-8"><h2 class="h4 fw-bold mb-3">Assigned appointments</h2>
+      {% if appointments %}
+      <div class="table-responsive panel-card p-0"><table class="table align-middle mb-0"><thead><tr><th>Patient</th><th>Date & time</th><th>Contact & care notes</th><th>Status</th><th>Update</th></tr></thead><tbody>
+      {% for appointment in appointments %}<tr><td class="fw-semibold">{{ appointment.patient_name }}<small class="d-block text-secondary">{{ appointment.age }} · {{ appointment.gender }}</small></td>
+        <td>{{ appointment.appointment_date|pretty_date }}<small class="d-block text-secondary">{{ appointment.time_slot|time_label }}</small></td>
+        <td><small>{{ appointment.phone }}{% if appointment.medical_history %}<br>History: {{ appointment.medical_history }}{% endif %}</small></td>
+        <td><span class="status status-{{ appointment.status|lower }}">{{ appointment.status }}</span></td>
+        <td>{% if appointment.status == 'Pending' %}<div class="d-flex gap-2"><form method="post" action="{{ url_for('update_appointment_status', appointment_id=appointment.id) }}"><input type="hidden" name="status" value="Confirmed"><button class="btn btn-sm btn-outline-primary">Confirm</button></form><form method="post" action="{{ url_for('update_appointment_status', appointment_id=appointment.id) }}" data-confirm="Cancel this appointment?"><input type="hidden" name="status" value="Cancelled"><button class="btn btn-sm btn-outline-danger">Cancel</button></form></div>{% elif appointment.status == 'Confirmed' %}<div class="d-flex gap-2"><form method="post" action="{{ url_for('update_appointment_status', appointment_id=appointment.id) }}"><input type="hidden" name="status" value="Completed"><button class="btn btn-sm btn-outline-success">Complete</button></form><form method="post" action="{{ url_for('update_appointment_status', appointment_id=appointment.id) }}" data-confirm="Cancel this appointment?"><input type="hidden" name="status" value="Cancelled"><button class="btn btn-sm btn-outline-danger">Cancel</button></form></div>{% endif %}</td></tr>
+      {% endfor %}</tbody></table></div>
+      {% else %}<div class="empty-state">No appointments are assigned to you yet.</div>{% endif %}
+    </div>
+    <div class="col-lg-4"><div class="panel-card"><h2 class="h5 fw-bold">Add availability</h2>
+      <form method="post" action="{{ url_for('add_availability') }}" class="mt-3">
+        <label class="form-label" for="appointment_date">Date</label><input class="form-control mb-3" type="date" id="appointment_date" name="appointment_date" min="{{ today }}" required>
+        <label class="form-label" for="time_slot">Time</label><select class="form-select mb-3" id="time_slot" name="time_slot">{% for time in ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00'] %}<option>{{ time }}</option>{% endfor %}</select>
+        <button class="btn btn-primary w-100">Add time slot</button>
+      </form>
+      <hr><h3 class="h6 fw-bold">Upcoming availability</h3>
+      <div class="slot-list">{% for slot in slots %}<div class="d-flex justify-content-between align-items-center py-2 border-bottom"><span>{{ slot.appointment_date|pretty_date }} · {{ slot.time_slot|time_label }}</span><form method="post" action="{{ url_for('delete_availability', slot_id=slot.id) }}"><button class="btn btn-sm btn-link text-danger p-0" title="Remove slot">Remove</button></form></div>{% else %}<small class="text-secondary">No upcoming slots.</small>{% endfor %}</div>
+    </div></div>
+  </div>
+{% endif %}
+</section>
+{% endblock %}

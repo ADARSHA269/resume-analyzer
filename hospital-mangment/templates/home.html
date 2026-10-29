@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}CarePoint Hospital | Your health, our priority{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container py-5">
+    <div class="row align-items-center g-5 py-lg-4">
+      <div class="col-lg-7">
+        <span class="eyebrow">WELCOME TO CAREPOINT</span>
+        <h1 class="display-4 fw-bold mt-3">Better care starts with a <span class="text-accent">healthier you.</span></h1>
+        <p class="lead text-secondary mt-3">Connect with experienced doctors, find a time that works, and keep your care journey in one place.</p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          {% if g.user and g.user.role == 'patient' %}
+            <a class="btn btn-primary btn-lg" href="{{ url_for('book_appointment') }}">Book an appointment</a>
+          {% elif not g.user %}
+            <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Book an appointment</a>
+          {% else %}
+            <a class="btn btn-primary btn-lg" href="{{ url_for('dashboard') }}">Go to dashboard</a>
+          {% endif %}
+          <a class="btn btn-outline-primary btn-lg" href="{{ url_for('doctors') }}">Meet our doctors</a>
+        </div>
+        <div class="hero-points mt-4"><span>✓ Qualified specialists</span><span>✓ Simple online booking</span><span>✓ Patient-first care</span></div>
+      </div>
+      <div class="col-lg-5">
+        <div class="hero-card">
+          <div class="hero-icon">✚</div>
+          <h2 class="h4 mt-4">Care that fits your life</h2>
+          <p class="text-secondary mb-0">Browse trusted specialists and book available clinic appointments in just a few steps.</p>
+          <div class="care-stats mt-4"><div><strong>10</strong><span>Specialties</span></div><div><strong>Here</strong><span>For your family</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="container section-space">
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div><span class="eyebrow">OUR CARE TEAM</span><h2 class="h1 fw-bold mt-2">Meet our doctors</h2></div>
+    <a href="{{ url_for('doctors') }}" class="btn btn-outline-primary">View all doctors</a>
+  </div>
+  <div class="row g-3">
+    {% for doctor in doctors %}
+    <div class="col-md-6 col-lg-4"><div class="card doctor-card h-100"><div class="card-body p-4">
+      <div class="doctor-avatar">{{ doctor.name[0] }}</div><span class="specialty-label">{{ doctor.specialization }}</span>
+      <h3 class="h5 mt-3 mb-1">{{ doctor.name }}</h3><p class="text-secondary mb-1">{{ doctor.qualification }}</p>
+      <small class="text-secondary">{{ doctor.experience }} years of experience</small>
+    </div></div></div>
+    {% else %}<p class="text-secondary">Doctor profiles will appear here.</p>{% endfor %}
+  </div>
+</section>
+<section class="container pb-5"><div class="cta-band d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+  <div><h2 class="h3 fw-bold mb-1">Your next step to feeling better</h2><p class="mb-0 opacity-75">Choose a specialist and find a time that suits you.</p></div>
+  <a class="btn btn-light text-primary fw-semibold" href="{{ url_for('doctors') }}">Explore specialties</a>
+</div></section>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Manage appointments | CarePoint{% endblock %}
+{% block content %}
+<section class="page-heading"><div class="container"><span class="eyebrow">ADMIN PORTAL</span><h1 class="display-6 fw-bold mt-2">All appointments</h1><p class="text-secondary mb-0">Review bookings and manage appointment status.</p></div></section>
+<section class="container section-space pt-4">
+  <div class="table-responsive panel-card p-0"><table class="table align-middle mb-0"><thead><tr><th>Reference</th><th>Patient</th><th>Doctor</th><th>Date & time</th><th>Status</th><th>Action</th></tr></thead><tbody>
+    {% for appointment in appointments %}
+    <tr><td class="fw-semibold">{{ appointment.appointment_code }}</td><td>{{ appointment.patient_name }}</td><td>{{ appointment.doctor_name }}<small class="d-block text-secondary">{{ appointment.specialization }}</small></td>
+      <td>{{ appointment.appointment_date|pretty_date }}<small class="d-block text-secondary">{{ appointment.time_slot|time_label }}</small></td>
+      <td><span class="status status-{{ appointment.status|lower }}">{{ appointment.status }}</span></td>
+      <td>{% if appointment.status in ['Pending', 'Confirmed'] %}<div class="d-flex gap-2">
+        {% if appointment.status == 'Pending' %}<form method="post" action="{{ url_for('update_appointment_status', appointment_id=appointment.id) }}"><input type="hidden" name="status" value="Confirmed"><button class="btn btn-sm btn-outline-primary">Confirm</button></form>{% endif %}
+        <form method="post" action="{{ url_for('cancel_appointment', appointment_id=appointment.id) }}" data-confirm="Cancel this appointment?"><button class="btn btn-sm btn-outline-danger">Cancel</button></form>
+      </div>{% endif %}</td>
+    </tr>
+    {% else %}<tr><td colspan="6" class="text-secondary p-4">No appointments have been booked.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+{% endblock %}

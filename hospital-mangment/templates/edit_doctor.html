@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Edit doctor | CarePoint{% endblock %}
+{% block content %}
+<section class="page-heading"><div class="container"><span class="eyebrow">ADMIN PORTAL</span><h1 class="display-6 fw-bold mt-2">Edit doctor profile</h1></div></section>
+<section class="container section-space pt-4"><div class="panel-card form-panel">
+  <form method="post" class="row g-3">
+    <div class="col-md-6"><label class="form-label">Doctor name</label><input class="form-control" name="name" value="{{ doctor.name }}" required></div>
+    <div class="col-md-6"><label class="form-label">Email</label><input class="form-control" name="email" type="email" value="{{ doctor.email }}" required></div>
+    <div class="col-md-6"><label class="form-label">Specialization</label><select class="form-select" name="specialization">{% for item in specializations %}<option {% if item == doctor.specialization %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></div>
+    <div class="col-md-6"><label class="form-label">Qualification</label><input class="form-control" name="qualification" value="{{ doctor.qualification }}" required></div>
+    <div class="col-md-4"><label class="form-label">Experience (years)</label><input class="form-control" name="experience" type="number" min="0" value="{{ doctor.experience }}" required></div>
+    <div class="col-md-4"><label class="form-label">Consultation fee</label><input class="form-control" name="fee" type="number" min="0" step="1" value="{{ doctor.fee }}" required></div>
+    <div class="col-md-4"><label class="form-label">Phone</label><input class="form-control" name="phone" value="{{ doctor.phone }}" required></div>
+    <div class="col-12"><label class="form-label">Available timings</label><input class="form-control" name="timings" value="{{ doctor.timings }}" required></div>
+    <div class="col-12 d-flex gap-2"><button class="btn btn-primary">Save changes</button><a class="btn btn-outline-secondary" href="{{ url_for('manage_doctors') }}">Cancel</a></div>
+  </form>
+</div></section>
+{% endblock %}

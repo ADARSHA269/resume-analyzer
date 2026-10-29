@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Create patient account | CarePoint{% endblock %}
+{% block content %}
+<section class="container auth-wrap">
+  <div class="auth-card auth-card-wide">
+    <span class="eyebrow">PATIENT REGISTRATION</span><h1 class="h2 fw-bold mt-2">Create your account</h1>
+    <p class="text-secondary">Your information is used to manage your care and appointments.</p>
+    <form method="post" class="row g-3 mt-2">
+      <div class="col-md-6"><label class="form-label" for="name">Full name</label><input class="form-control" id="name" name="name" required maxlength="100"></div>
+      <div class="col-md-6"><label class="form-label" for="email">Email</label><input class="form-control" id="email" name="email" type="email" required maxlength="254"></div>
+      <div class="col-md-6"><label class="form-label" for="password">Password</label><input class="form-control" id="password" name="password" type="password" minlength="8" required autocomplete="new-password"></div>
+      <div class="col-md-6"><label class="form-label" for="phone">Phone</label><input class="form-control" id="phone" name="phone" type="tel" required maxlength="30"></div>
+      <div class="col-md-6"><label class="form-label" for="age">Age</label><input class="form-control" id="age" name="age" type="number" min="0" max="120" required></div>
+      <div class="col-md-6"><label class="form-label" for="gender">Gender</label><select class="form-select" id="gender" name="gender" required><option value="">Select</option><option>Female</option><option>Male</option><option>Non-binary</option><option>Prefer not to say</option></select></div>
+      <div class="col-12"><label class="form-label" for="medical_history">Basic medical history <span class="text-secondary">(optional)</span></label><textarea class="form-control" id="medical_history" name="medical_history" rows="3" maxlength="1000"></textarea><div class="form-text">Only share information relevant to your care.</div></div>
+      <div class="col-12"><button class="btn btn-primary btn-lg w-100">Create account</button></div>
+    </form>
+    <p class="text-secondary text-center mt-4 mb-0">Already registered? <a href="{{ url_for('login') }}">Log in</a></p>
+  </div>
+</section>
+{% endblock %}

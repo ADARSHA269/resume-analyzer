@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}My appointments | CarePoint{% endblock %}
+{% block content %}
+<section class="page-heading"><div class="container"><span class="eyebrow">YOUR CARE JOURNEY</span><h1 class="display-6 fw-bold mt-2">My appointments</h1><p class="text-secondary mb-0">Review appointment details and status.</p></div></section>
+<section class="container section-space pt-4">
+  {% if appointments %}
+  <div class="table-responsive panel-card p-0"><table class="table align-middle mb-0">
+    <thead><tr><th>Reference</th><th>Doctor</th><th>Date & time</th><th>Status</th><th></th></tr></thead><tbody>
+      {% for appointment in appointments %}
+      <tr><td class="fw-semibold">{{ appointment.appointment_code }}</td><td>{{ appointment.doctor_name }}<small class="d-block text-secondary">{{ appointment.specialization }}</small></td>
+      <td>{{ appointment.appointment_date|pretty_date }}<small class="d-block text-secondary">{{ appointment.time_slot|time_label }}</small></td>
+      <td><span class="status status-{{ appointment.status|lower }}">{{ appointment.status }}</span></td>
+      <td>{% if appointment.status in ['Pending', 'Confirmed'] %}<form method="post" action="{{ url_for('cancel_appointment', appointment_id=appointment.id) }}" data-confirm="Cancel this appointment?"><button class="btn btn-sm btn-outline-danger">Cancel</button></form>{% endif %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}
+  <div class="empty-state"><div class="doctor-avatar mx-auto mb-3">+</div><h2 class="h5">No appointments yet</h2><p class="text-secondary">When you book a visit, it will show up here.</p><a class="btn btn-primary" href="{{ url_for('book_appointment') }}">Book an appointment</a></div>
+  {% endif %}
+</section>
+{% endblock %}

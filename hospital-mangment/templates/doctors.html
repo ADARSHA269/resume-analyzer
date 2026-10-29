@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Find a doctor | CarePoint{% endblock %}
+{% block content %}
+<section class="page-heading"><div class="container"><span class="eyebrow">OUR CARE TEAM</span><h1 class="display-6 fw-bold mt-2">Find the right doctor</h1><p class="text-secondary mb-0">Explore our specialties and experienced care team.</p></div></section>
+<section class="container section-space pt-4">
+  <form method="get" class="filter-bar mb-4">
+    <label class="form-label mb-0 fw-semibold" for="specialization">Specialization</label>
+    <select class="form-select filter-select" id="specialization" name="specialization" onchange="this.form.submit()">
+      <option value="">All specialties</option>{% for item in specializations %}<option value="{{ item }}" {% if selected == item %}selected{% endif %}>{{ item }}</option>{% endfor %}
+    </select>
+    <noscript><button class="btn btn-primary">Filter</button></noscript>
+  </form>
+  <div class="row g-3">
+    {% for doctor in doctors %}
+    <div class="col-md-6 col-lg-4"><div class="card doctor-card h-100"><div class="card-body p-4">
+      <div class="d-flex justify-content-between"><div class="doctor-avatar">{{ doctor.name[0] }}</div><span class="specialty-label align-self-start">{{ doctor.specialization }}</span></div>
+      <h2 class="h5 mt-3 mb-1">{{ doctor.name }}</h2><p class="text-secondary mb-1">{{ doctor.qualification }}</p>
+      <p class="small text-secondary">{{ doctor.experience }} years experience · {{ doctor.timings }}<br>Contact: {{ doctor.phone }}</p>
+      <p class="fee mb-3">₹{{ '%.0f'|format(doctor.fee) }} <span class="text-secondary fw-normal">/ consultation</span></p>
+      {% if g.user and g.user.role == 'patient' %}<a class="btn btn-primary" href="{{ url_for('book_appointment', doctor_id=doctor.id, specialization=doctor.specialization) }}">Book with doctor</a>
+      {% elif not g.user %}<a class="btn btn-outline-primary" href="{{ url_for('login') }}">Log in to book</a>{% endif %}
+    </div></div></div>
+    {% else %}<div class="col-12"><div class="empty-state">No doctors found for this specialty. Try another filter.</div></div>{% endfor %}
+  </div>
+</section>
+{% endblock %}

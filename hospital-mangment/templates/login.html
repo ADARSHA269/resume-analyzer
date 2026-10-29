@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Log in | CarePoint{% endblock %}
+{% block content %}
+<section class="container auth-wrap">
+  <div class="auth-card">
+    <span class="eyebrow">WELCOME BACK</span><h1 class="h2 fw-bold mt-2">Log in to CarePoint</h1>
+    <p class="text-secondary">Use your account to continue to your secure dashboard.</p>
+    <form method="post" class="mt-4">
+      <label class="form-label" for="email">Email address</label>
+      <input class="form-control mb-3" id="email" name="email" type="email" autocomplete="username" required>
+      <label class="form-label" for="password">Password</label>
+      <input class="form-control mb-3" id="password" name="password" type="password" autocomplete="current-password" required>
+      <label class="form-label" for="role">Account type</label>
+      <select class="form-select mb-4" id="role" name="role" required>
+        <option value="patient">Patient</option><option value="doctor">Doctor</option><option value="admin">Admin</option>
+      </select>
+      <button class="btn btn-primary w-100 btn-lg">Log in</button>
+    </form>
+    <p class="text-secondary text-center mt-4 mb-0">New here? <a href="{{ url_for('register') }}">Create a patient account</a></p>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Manage patients | CarePoint{% endblock %}
+{% block content %}
+<section class="page-heading"><div class="container"><span class="eyebrow">ADMIN PORTAL</span><h1 class="display-6 fw-bold mt-2">Patient records</h1><p class="text-secondary mb-0">Access is limited to authorized hospital administrators.</p></div></section>
+<section class="container section-space pt-4">
+  <div class="table-responsive panel-card p-0"><table class="table align-middle mb-0"><thead><tr><th>Patient</th><th>Age / gender</th><th>Contact</th><th>Medical history</th><th></th></tr></thead><tbody>
+    {% for patient in patients %}<tr><td class="fw-semibold">{{ patient.name }}<small class="d-block text-secondary">{{ patient.email }}</small></td><td>{{ patient.age }} / {{ patient.gender }}</td><td>{{ patient.phone }}</td><td class="history-cell">{{ patient.medical_history or '—' }}</td><td><a class="btn btn-sm btn-outline-primary" href="{{ url_for('edit_patient', patient_id=patient.id) }}">Edit</a></td></tr>
+    {% else %}<tr><td colspan="5" class="text-secondary p-4">No patient records found.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+{% endblock %}

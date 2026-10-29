@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}CarePoint Hospital{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark nav-hospital">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="{{ url_for('home') }}"><span class="brand-mark">+</span> CarePoint</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('doctors') }}">Find a doctor</a></li>
+        {% if g.user %}
+          {% if g.user.role == 'patient' %}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('my_appointments') }}">My appointments</a></li>
+            <li class="nav-item"><a class="btn btn-sm btn-light text-primary fw-semibold px-3" href="{{ url_for('book_appointment') }}">Book appointment</a></li>
+          {% elif g.user.role == 'admin' %}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('manage_doctors') }}">Doctors</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('manage_patients') }}">Patients</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('manage_appointments') }}">Appointments</a></li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Doctor dashboard</a></li>
+          {% endif %}
+          <li class="nav-item"><span class="nav-link text-white-50">{{ g.user.name }}</span></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Log out</a></li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Log in</a></li>
+          <li class="nav-item"><a class="btn btn-sm btn-light text-primary fw-semibold px-3" href="{{ url_for('register') }}">Create account</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+<main>
+  <div class="container pt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+  {% block content %}{% endblock %}
+</main>
+<footer class="footer mt-5">
+  <div class="container d-flex flex-column flex-md-row justify-content-between gap-2">
+    <span>CarePoint Hospital · Compassionate care, close to home</span>
+    <span>For emergencies, contact your local emergency services.</span>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
